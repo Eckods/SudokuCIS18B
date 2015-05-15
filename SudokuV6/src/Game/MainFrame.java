@@ -271,7 +271,7 @@ public class MainFrame extends JFrame{
                     rowData[row][column] = num;
                 }else{
                     sudokuUserPuzzle[row][column] = 0;
-                    rowData[row][column] = "0"; 
+                    rowData[row][column] = ""; 
                 }
             }
         }
