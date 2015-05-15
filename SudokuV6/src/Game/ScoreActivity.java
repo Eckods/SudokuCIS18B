@@ -30,8 +30,11 @@ import javax.swing.JTextField;
  */
 public class ScoreActivity extends JFrame{
     public boolean isOpen = true;
-    private JLabel submitButton;
+    private final JLabel windowBackground, scoreLabel, aliasLabel, submitButton;
     private JButton closeButton;
+    private final JPanel aliasPanel, buttonPanel;
+    private final JTable scoreTable;
+    private final JTextField textField;
     
     /**
      * Sets up the components for the score window
@@ -43,7 +46,7 @@ public class ScoreActivity extends JFrame{
         setLayout(new FlowLayout(0,0,0));     
         
         // Set background image for score window
-        JLabel windowBackground = new JLabel();
+        windowBackground = new JLabel();
         windowBackground.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "OtherWindowBackground.png")));  
         windowBackground.setPreferredSize(new Dimension(600, 500));
@@ -51,7 +54,7 @@ public class ScoreActivity extends JFrame{
         GridBagConstraints c = new GridBagConstraints();
         
         // Create score window label
-        JLabel scoreLabel = new JLabel();
+        scoreLabel = new JLabel();
         scoreLabel.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "ScoreLabel.png")));
         scoreLabel.setSize(new Dimension(600, 110));
@@ -62,16 +65,16 @@ public class ScoreActivity extends JFrame{
         windowBackground.add(scoreLabel, c);
         
         // Create a text field for alias input
-        JPanel aliasPanel = new JPanel();
+        aliasPanel = new JPanel();
         aliasPanel.setMinimumSize(new Dimension(470, 20));
         aliasPanel.setOpaque(false);
         aliasPanel.setLayout(new FlowLayout(0,0,0));
-        JLabel aliasLabel = new JLabel("Enter an alias: ");
+        aliasLabel = new JLabel("Enter an alias: ");
         aliasLabel.setForeground(Color.white);
         aliasLabel.setOpaque(false);
         aliasLabel.setPreferredSize(new Dimension(90, 20));
         
-        JTextField textField = new JTextField();
+        textField = new JTextField();
         textField.setPreferredSize(new Dimension(370, 20));
         
         aliasPanel.add(aliasLabel);
@@ -83,7 +86,7 @@ public class ScoreActivity extends JFrame{
         windowBackground.add(aliasPanel, c);
         
         // Create table for scores
-        JTable scoreTable = new JTable();
+        scoreTable = new JTable();
         scoreTable.setPreferredSize(new Dimension(470, 310));
         scoreTable.setMinimumSize(new Dimension(470, 310));
         c.fill = GridBagConstraints.VERTICAL;
@@ -95,11 +98,12 @@ public class ScoreActivity extends JFrame{
         windowBackground.add(scoreTable, c);
         
         // Create buttons
+        submitButton = new JLabel();
         createButtons();
         
         // Add the close button to submit button layout and add that to
         // the button panel
-        JPanel buttonPanel = new JPanel();
+        buttonPanel = new JPanel();
         buttonPanel.setMinimumSize(new Dimension(321,30));
         buttonPanel.setLayout(new FlowLayout(0,0,0));
         buttonPanel.setOpaque(false);
@@ -121,7 +125,6 @@ public class ScoreActivity extends JFrame{
         // Set up the button w/ its image, size and tip information
         // (submit button made a label to group it together with the close 
         // button due to its custom shape)
-        submitButton = new JLabel();
         submitButton.setIcon( new ImageIcon(getClass().getResource("/Images/"
                     + "Submit.png")));
         submitButton.setPreferredSize(new Dimension(317,30));

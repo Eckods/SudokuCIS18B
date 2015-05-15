@@ -13,23 +13,23 @@ import javax.swing.table.AbstractTableModel;
  * @author Steve Sanchez
  */
 public class MyTableModel extends AbstractTableModel{
-    private String forbidden [][] = new String [9][9];
-    private Object rowData[][] = new Object [9][9];
-    private Object colData[] = new Object [9];
+    private final String forbidden[][] = new String[9][9];
+    private final Object rowData[][] = new Object[9][9];
+    private final Object colData[] = new Object[9];
     
     /**
      * Initializes the forbidden cells, rowData, and colData for the 
      * Table model
-     * @param row The row data
-     * @param col The column data
-     * @param sudokuForbiddenCells The forbidden cells of the table
+     * @param rowValues The row data
+     * @param colValues The column data
+     * @param forbiddenCells The forbidden cells of the table
      */
-    public MyTableModel(Object row[][], Object col[], String sudokuForbiddenCells[][]){
+    public MyTableModel(Object rowValues[][], Object colValues[], String forbiddenCells[][]){
         for(int i = 0; i <9; i++){
             for(int j = 0; j < 9; j++){
-                forbidden[i][j] = sudokuForbiddenCells[i][j];
-                rowData[i][j] = row[i][j];
-                colData[j] = col[j];
+                forbidden[i][j] = forbiddenCells[i][j];
+                rowData[i][j] = rowValues[i][j];
+                colData[j] = colValues[j];
             }
         }
     }

@@ -31,6 +31,10 @@ import javax.swing.JScrollPane;
  */
 public class GuideActivity extends JFrame{
     public boolean isOpen = true;
+    private final JLabel windowBackground, guideLabel;
+    private final JEditorPane editorPane;
+    private final JScrollPane editorScrollPane;
+    private final JButton closeButton;
     
     /**
      * Sets up the components for the guide window
@@ -42,7 +46,7 @@ public class GuideActivity extends JFrame{
         setLayout(new FlowLayout(0,0,0));     
         
         // Set background image for guide window
-        JLabel windowBackground = new JLabel();
+        windowBackground = new JLabel();
         windowBackground.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "WindowBackground.png")));  
         windowBackground.setPreferredSize(new Dimension(600, 500));
@@ -50,7 +54,7 @@ public class GuideActivity extends JFrame{
         GridBagConstraints c = new GridBagConstraints();
         
         // Create guide window label
-        JLabel guideLabel = new JLabel();
+        guideLabel = new JLabel();
         guideLabel.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "GuideLabel.png")));
         guideLabel.setSize(new Dimension(600, 110));
@@ -61,8 +65,8 @@ public class GuideActivity extends JFrame{
         windowBackground.add(guideLabel, c);
         
         // Create editor pane
-        JEditorPane editorPane = new JEditorPane();
-        JScrollPane editorScrollPane = new JScrollPane(editorPane);
+        editorPane = new JEditorPane();
+        editorScrollPane = new JScrollPane(editorPane);
         editorPane.setForeground(Color.white);
         editorPane.setBackground(new Color(79, 14, 8));
         editorScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -88,7 +92,7 @@ public class GuideActivity extends JFrame{
         windowBackground.add(editorScrollPane, c);
         
         // Create close button
-        JButton closeButton = new JButton();
+        closeButton = new JButton();
         closeButton.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "Close.png")));       
         closeButton.setPressedIcon(new ImageIcon(getClass().getResource("/Images/"

@@ -3,8 +3,8 @@
 package Game;
 
 
-public class sudokuCode {
-    public int[][] sudoku(int [][] sudoku){
+public class SudokuCode{
+    public int[][] sudoku(int[][] sudoku){
         int w=0; // controls while loop for sudoku
         sudoku=new int[9][9];    //Making a two dimensional array to store Sudoku
         int rNumber;    //rNumber to hold random numbers

@@ -35,18 +35,22 @@ import javax.swing.JTable;
  * @author Steve Sanchez
  */
 public class MainFrame extends JFrame{
-    private String sudokuForbidden [][] = new String [9][9];
-    private Object rowData[][];
-    private static JTable table;
+    private final JLabel mainBackground, gameBackground, gridBackground, 
+            sudokuTitle, options;
+    private JTable table;
     private JMenuBar menuBar;
+    private JMenu gameMenu, aboutMenu;
+    private JMenuItem backItem, exitItem, aboutItem;
     private ScoreActivity scoreFrame;
     private GuideActivity guideFrame;
     private AboutActivity aboutFrame;
-    private boolean scoreFrameOpen = false;
-    private boolean guideFrameOpen = false;
-    private boolean aboutFrameOpen = false;
     private final CardLayout cardLayout;
-    private final JPanel stackedWindows;
+    private final JPanel stackedWindows, mainButtonPanel, gameButtonPanel, 
+            gridPanel;
+    private boolean scoreFrameOpen, guideFrameOpen, aboutFrameOpen = false;
+    private final String sudokuForbidden[][] = new String[9][9];
+    private final Object rowData[][] = new Object[9][9];
+    private final Object colData[] = {"1","2","3","4","5","6","7","8","9"};
     private final JButton mainButton[] = new JButton[4];
     String mainButtonImages[] = {"Start", "Score", "Guide", "Exit"};
     String mainButtonTips[] = {"Start Game", "View Hi-Scores", 
@@ -75,34 +79,34 @@ public class MainFrame extends JFrame{
         createMenuBar();
                 
         // Set background image for main window and game window
-        JLabel mainBackground = new JLabel();
+        mainBackground = new JLabel();
         mainBackground.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "TitleBackground.png")));  
         mainBackground.setLayout(new FlowLayout());
         
-        JLabel gameBackground = new JLabel();
+        gameBackground = new JLabel();
         gameBackground.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "OtherBackground.png")));
         gameBackground.setLayout(new GridBagLayout());
         GridBagConstraints constraints = new GridBagConstraints();
                
         // Create labels for main window and game window
-        JLabel sudokuTitle = new JLabel();
+        sudokuTitle = new JLabel();
         sudokuTitle.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "Title.png")));
         sudokuTitle.setPreferredSize(new Dimension(800, 120));
 
-        JLabel options = new JLabel();
+        options = new JLabel();
         options.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "Options.png")));
         options.setPreferredSize(new Dimension(200, 120));
         
         // Create panels to hold main window and game window buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setOpaque(false);
+        mainButtonPanel = new JPanel();
+        mainButtonPanel.setLayout(new BoxLayout(mainButtonPanel, BoxLayout.Y_AXIS));
+        mainButtonPanel.setOpaque(false);
         
-        JPanel gameButtonPanel = new JPanel();
+        gameButtonPanel = new JPanel();
         gameButtonPanel.setLayout(new BoxLayout(gameButtonPanel, BoxLayout.Y_AXIS));
         gameButtonPanel.setOpaque(false);
         gameButtonPanel.setPreferredSize(new Dimension(200, 600));
@@ -113,9 +117,9 @@ public class MainFrame extends JFrame{
         
         // Create sudoku game grid and set its place on gridlayout
         createGrid();
-        JPanel gridPanel = new JPanel();
+        gridPanel = new JPanel();
         gridPanel.setLayout(new BoxLayout(gridPanel, BoxLayout.Y_AXIS));
-        JLabel gridBackground = new JLabel();
+        gridBackground = new JLabel();
         gridBackground.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "Grid.png")));  
         gridBackground.setLayout(new BorderLayout());
@@ -132,7 +136,7 @@ public class MainFrame extends JFrame{
         
         // Add buttons to panel for main window
         for (int i =0; i < mainButton.length; i++){
-            buttonPanel.add(mainButton[i]);
+            mainButtonPanel.add(mainButton[i]);
         }
         
         // Add buttons to panel for game window and set its place on gridlayout
@@ -141,8 +145,7 @@ public class MainFrame extends JFrame{
             gameButtonPanel.add(otherButton[i]);
         }
         
-        Dimension minSize = new Dimension(0,204);
-        gameButtonPanel.add(Box.createRigidArea(minSize));
+        gameButtonPanel.add(Box.createRigidArea(new Dimension(0,204)));
     
         constraints.fill = GridBagConstraints.HORIZONTAL;
         constraints.gridx = 2;
@@ -152,7 +155,7 @@ public class MainFrame extends JFrame{
         
         // Add the button panel to main window layout
         mainBackground.add(sudokuTitle);
-        mainBackground.add(buttonPanel);
+        mainBackground.add(mainButtonPanel);
         
         // Add the main window layout and game window layout to card layout
         stackedWindows.add(mainBackground);
@@ -170,15 +173,15 @@ public class MainFrame extends JFrame{
         menuBar.setBorderPainted(false);
         
         // Creates categories in menu
-        JMenu gameMenu = new JMenu("Game");
+        gameMenu = new JMenu("Game");
         gameMenu.setForeground(new Color(119,72,68));
         gameMenu.setBorderPainted(false);
-        JMenu aboutMenu = new JMenu("About");
+        aboutMenu = new JMenu("About");
         aboutMenu.setForeground(new Color(119,72,68));
         aboutMenu.setBorderPainted(false);
         
         // Creates items for the menu categories
-        JMenuItem backItem = new JMenuItem("Back to Title");
+        backItem = new JMenuItem("Back to Title");
         backItem.setBorderPainted(false);
         backItem.setForeground(new Color(119,72,68));
         backItem.setBackground(new Color(40,7,2));
@@ -188,7 +191,7 @@ public class MainFrame extends JFrame{
                 backItemActionPerformed(event);
             }
         });
-        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem = new JMenuItem("Exit");
         exitItem.setBorderPainted(false);
         exitItem.setForeground(new Color(119,72,68));
         exitItem.setBackground(new Color(40,7,2));
@@ -198,7 +201,7 @@ public class MainFrame extends JFrame{
                 exitButtonActionPerformed(event);
             }
         });
-        JMenuItem aboutItem = new JMenuItem("About Sudoku");
+        aboutItem = new JMenuItem("About Sudoku");
         aboutItem.setBorderPainted(false);
         aboutItem.setForeground(new Color(119,72,68));
         aboutItem.setBackground(new Color(40,7,2));
@@ -222,8 +225,6 @@ public class MainFrame extends JFrame{
      * Creates the table used as the game board
      */
     private void createGrid(){
-        rowData = new Object[9][9];
-        Object colData[] = {"1","2","3","4","5","6","7","8","9"};
         // Set the rowData for the game
         generateGameBoard();
         
@@ -235,7 +236,6 @@ public class MainFrame extends JFrame{
         table.setFont(new Font("Serif", Font.PLAIN, 18));
         table.setForeground(Color.white);
         table.setRowHeight(61); 
-        //table.setIntercellSpacing(new Dimension(51,0));
         table.setShowGrid(false);
         table.setVisible(true); 
         table.setOpaque(false);
@@ -244,11 +244,11 @@ public class MainFrame extends JFrame{
     
     public void generateGameBoard(){
         int sudokuCompletePuzzle [][] = new int [9][9];
-        sudokuCode puzzleGenerator = new sudokuCode();
+        SudokuCode puzzleGenerator = new SudokuCode();
         sudokuCompletePuzzle = puzzleGenerator.sudoku(sudokuCompletePuzzle);
-        int rNumber ;
         int sudokuUserPuzzle [][] = new int [9][9];
-        String num = "";
+        int rNumber ;
+        String dataNum = "";
         
         //test making random board template
         for(int row = 0; row < 9; row++){
@@ -265,10 +265,10 @@ public class MainFrame extends JFrame{
             for(int column = 0; column <9; column++){
                 if(sudokuUserPuzzle[row][column]!= 0){
                     sudokuUserPuzzle[row][column] = sudokuCompletePuzzle[row][column];
-                    num = "" + sudokuUserPuzzle[row][column];
+                    dataNum = "" + sudokuUserPuzzle[row][column];
                     // If its a given number, its now a forbidden cell
-                    sudokuForbidden[row][column] = num;
-                    rowData[row][column] = num;
+                    sudokuForbidden[row][column] = dataNum;
+                    rowData[row][column] = dataNum;
                 }else{
                     sudokuUserPuzzle[row][column] = 0;
                     rowData[row][column] = ""; 

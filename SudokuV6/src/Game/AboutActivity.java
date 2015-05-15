@@ -25,6 +25,8 @@ import javax.swing.JLabel;
  */
 public class AboutActivity extends JFrame{
     public boolean isOpen = true;
+    private final JLabel windowBackground, infoLabel, aboutLabel;
+    private final JButton closeButton;
     
     /**
      * Sets up the components for the about window
@@ -36,7 +38,7 @@ public class AboutActivity extends JFrame{
         setLayout(new FlowLayout(0,0,0));     
         
         // Set background image for about window
-        JLabel windowBackground = new JLabel();
+        windowBackground = new JLabel();
         windowBackground.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "InfoBackground.png")));  
         windowBackground.setPreferredSize(new Dimension(400, 250));
@@ -44,7 +46,7 @@ public class AboutActivity extends JFrame{
         GridBagConstraints c = new GridBagConstraints();
         
         // Create about window label alongside an info icon
-        JLabel infoLabel = new JLabel();
+        infoLabel = new JLabel();
         infoLabel.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "Info.png")));  
         infoLabel.setPreferredSize(new Dimension(110, 220));       
@@ -63,9 +65,8 @@ public class AboutActivity extends JFrame{
                 + "<p>- A database for user scores</p>"
                 + "<p>- Data pulled from an external URL</p>"
                 + "<p>- Etc.</p>";
-        String html1 = "<html><body style='width: ";
-        String html2 = "px'>";
-        JLabel aboutLabel = new JLabel(html1 + "190" + html2 + label);
+        String html = "<html><body style='width: 190 px'>";
+        aboutLabel = new JLabel(html + label);
         aboutLabel.setForeground(Color.white);
         aboutLabel.setPreferredSize(new Dimension(270, 220));
         aboutLabel.setFont(aboutLabel.getFont().deriveFont(13f));
@@ -77,7 +78,7 @@ public class AboutActivity extends JFrame{
         windowBackground.add(aboutLabel, c);
         
         // Create close button
-        JButton closeButton = new JButton();
+        closeButton = new JButton();
         closeButton.setIcon(new ImageIcon(getClass().getResource("/Images/"
                 + "Close.png")));       
         closeButton.setPressedIcon(new ImageIcon(getClass().getResource("/Images/"
