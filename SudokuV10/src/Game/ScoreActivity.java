@@ -34,6 +34,7 @@ import javax.swing.JTextField;
  */
 public class ScoreActivity extends JFrame{
     public boolean isOpen = true;
+    public int commitCount, hintCount = 0;
     private boolean commitSelected = false;
     private final JLabel windowBackground, scoreLabel, aliasLabel, submitButton;
     private JButton closeButton;
@@ -48,13 +49,15 @@ public class ScoreActivity extends JFrame{
      * @param title The new title of the window
      * @param buttonPressed The indicator for if commit brought up the window
      */
-    public ScoreActivity(String title, boolean buttonPressed){
+    public ScoreActivity(String title, boolean buttonPressed, int commit, int hint){
         super(title);
         // Set layout for frame 
         setLayout(new FlowLayout(0,0,0));     
         
         // Sets the boolean to the indicator of it Commit Sudoku was pressed
         commitSelected = buttonPressed;
+        commitCount = commit;
+        hintCount = hint;
         
         // Set background image for score window
         windowBackground = new JLabel();

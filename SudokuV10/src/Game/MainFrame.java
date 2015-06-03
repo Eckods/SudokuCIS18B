@@ -434,7 +434,7 @@ public class MainFrame extends JFrame {
     private void scoreButtonActionPerformed(ActionEvent event){                                         
         if(scoreFrameOpen == false || scoreFrame.getStatus() == false){
             scoreFrameOpen = true;
-            scoreFrame = new ScoreActivity("Hi-Scores", commitSelected);
+            scoreFrame = new ScoreActivity("Hi-Scores", commitSelected, commitCount, hintCount);
             scoreFrame.setSize(600, 525);
             scoreFrame.setResizable(false);
             scoreFrame.setVisible(true);
