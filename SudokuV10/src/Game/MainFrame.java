@@ -18,6 +18,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -29,12 +34,13 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 /**
  * MainFrame represents the main window for the Sudoku application
  * @author Steve Sanchez
  */
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame {
     private int hintAvailable = 1;
     public int hintCount, commitCount = 0;
     private final JLabel mainBackground, gameBackground, gridBackground, 
@@ -64,6 +70,8 @@ public class MainFrame extends JFrame{
         "Commit", "OtherExit"};
     String otherButtonTips[] = {"Generate New Puzzle", "Restart Puzzle", 
         "Get Hint For A #", "Display Solution", "Submit Answer", "Exit Game"};
+    Connection c = null;
+    PreparedStatement pst2 = null;
     
     /**
      * Sets up the main window's components, visuals, and functionality
@@ -628,6 +636,54 @@ public class MainFrame extends JFrame{
      * @param event The user pressed the commit button
      */
     private void commitButtonActionPerformed(ActionEvent event){ 
+        try {
+            //Assigning the userName to the user input.
+            String userName = ScoreActivity.textField.getText();
+            int clicks = 0;
+            
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("Connecting to database...");
+            c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/Desktop/SudokuV10/Sudoku.sqlite"); // Change for OPC
+          
+            // First lets get the last attempt
+            //stmt = c.createStatement();
+            String sql = "SELECT uAttempt FROM Sudoku where UserName = ?";
+            pst2 = c.prepareStatement(sql);
+            pst2.setString(1, userName);
+            ResultSet rs = pst2.executeQuery();
+            //STEP 5: Extract data from result set
+            if(rs.next()){
+               //Retrieve by column name
+               clicks  = rs.getInt("uAttempt");
+            } else {
+               // user does not exist.  Call the add user function
+            }
+            clicks++;
+          
+            // Now lets update the user attempts
+            sql = "Update Sudoku SET uAttempt = ? where UserName = ?";
+            pst2 = c.prepareStatement(sql);
+            pst2.setInt(1, clicks);
+            pst2.setString(2, userName);
+            pst2.executeUpdate();
+            System.out.println("Successfull Update");
+        rs.close();
+        } catch(Exception se){
+           se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
+        }  finally {
+           try{
+                    if(pst2!=null)
+                        pst2.close();
+                } catch(SQLException se2) {
+                    
+                } //do nothing.
+                try{
+                    if(c!=null)
+                        c.close();
+                } catch(SQLException se){
+                }
+        }
+        
         // Increment amount of times user pressed Commit
         commitCount++;
 

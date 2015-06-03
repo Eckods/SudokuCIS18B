@@ -15,6 +15,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -36,6 +40,8 @@ public class ScoreActivity extends JFrame{
     private final JPanel aliasPanel, buttonPanel;
     private final JTable scoreTable;
     private final JTextField textField;
+    Connection c = null;
+    PreparedStatement pst = null;
     
     /**
      * Sets up the components for the score window
@@ -212,6 +218,41 @@ public class ScoreActivity extends JFrame{
      * 
      */
     public void submitButtonActionPerformed(){
+             try {
+             //Register JDBC Driver. 
+                Class.forName("org.sqlite.JDBC");
+                
+                //Opening the connection. 
+                System.out.println("Connecting to database...");
+                //Pc users change the connection and use \\.
+                c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/Desktop/SudokuV10/Sudoku.sqlite");
+                
+                //Inserting data into the database.
+                String sql = "Insert into Sudoku (UserName, uAttempt, uHint) values (?, ?, ?)";
+                pst = c.prepareStatement(sql);
+                pst.setString(1, textField.getText()); // placing the user input into UserName.
+                pst.setInt(2, 0); //
+                pst.setInt(3, 0);
+                
+                
+                pst.execute();
+            
+            } catch (Exception se) {
+                se.printStackTrace();
+            } finally {
+                try{
+                    if(pst!=null)
+                        pst.close();
+                } catch(SQLException se2) {
+                    
+                } //do nothing.
+                try{
+                    if(c!=null)
+                        c.close();
+                } catch(SQLException se){
+               }
+            } System.out.println("Added User Successfully!");
+        
         if (commitSelected == false){
             // Do nothing
         }
