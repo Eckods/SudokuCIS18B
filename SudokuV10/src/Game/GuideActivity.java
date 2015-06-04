@@ -16,6 +16,8 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,6 +25,9 @@ import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 /**
  * GuideActivity represents the new window displaying Sudoku's rules
@@ -36,6 +41,8 @@ public class GuideActivity extends JFrame{
     private final JScrollPane editorScrollPane;
     private final JButton closeButton;
     
+    
+   
     /**
      * Sets up the components for the guide window
      * @param title 
@@ -66,22 +73,25 @@ public class GuideActivity extends JFrame{
         
         // Create editor pane
         editorPane = new JEditorPane();
+          try {
+            Document doc = Jsoup.connect("http://www.conceptispuzzles.com/?uri=puzzle/sudoku/rules").get();
+            org.jsoup.select.Elements paragraph = doc.select("p");
+            for(Element p: paragraph){
+                System.out.println(p.text());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(GuideActivity.class.getName()).log(Level.SEVERE, null, ex);
+        }
         editorScrollPane = new JScrollPane(editorPane);
         editorPane.setForeground(Color.white);
         editorPane.setBackground(new Color(79, 14, 8));
         editorScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         editorScrollPane.setPreferredSize(new Dimension(470, 340));
-        editorScrollPane.setMinimumSize(new Dimension(470, 340));       
+        editorScrollPane.setMinimumSize(new Dimension(470, 340));  
+        
+       
         editorPane.setEditable(false);
-        //URL helpURL = new URL("http://www.sudoku.ws/rules.htm");
-        //if (helpURL != null) {
-        //    try {
-         //       editorPane.setPage(helpURL);
-         //   } catch (IOException e) {
-         //       System.err.println("Attempted to read a bad URL: " + helpURL);
-         //   }
-       // }
-
+        //editorPane.setPage();
         editorScrollPane.setBorder(BorderFactory.createEmptyBorder());
         editorScrollPane.setBackground(new Color(79,14,8));
         c.gridx = 1;
@@ -118,7 +128,7 @@ public class GuideActivity extends JFrame{
         
         // Add background w/ components to frame
         add(windowBackground);
-    }
+    } 
     
     /**
      * Returns a boolean indicating whether or not the window is open

@@ -18,6 +18,7 @@ import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -40,9 +41,10 @@ public class ScoreActivity extends JFrame{
     private JButton closeButton;
     private final JPanel aliasPanel, buttonPanel;
     private final JTable scoreTable;
-    private final JTextField textField;
+    public static JTextField textField;
     Connection c = null;
     PreparedStatement pst = null;
+    PreparedStatement pst2 = null;
     
     /**
      * Sets up the components for the score window
@@ -228,7 +230,7 @@ public class ScoreActivity extends JFrame{
                 //Opening the connection. 
                 System.out.println("Connecting to database...");
                 //Pc users change the connection and use \\.
-                c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/Desktop/SudokuV10/Sudoku.sqlite");
+                c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/SudokuCIS18B/SudokuV10/Sudoku.sqlite");
                 
                 //Inserting data into the database.
                 String sql = "Insert into Sudoku (UserName, uAttempt, uHint) values (?, ?, ?)";
@@ -255,12 +257,8 @@ public class ScoreActivity extends JFrame{
                 } catch(SQLException se){
                }
             } System.out.println("Added User Successfully!");
-        
-        if (commitSelected == false){
-            // Do nothing
-        }
-        else
-            System.out.println("Submit button was pushed");
+            
+           
     }
     
     /**
@@ -268,6 +266,62 @@ public class ScoreActivity extends JFrame{
      * @param event The user pressed the close button
      */
     public void closeButtonActionPerformed(ActionEvent event){
+        //Updating the Users Hints and Commits.
+                try {
+            //Assigning the userName to the user input.
+            String userName = textField.getText();
+            //int clicks = 0;
+            //int commitCount =0;
+            
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("Connecting to database...");
+            c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/SudokuCIS18B/SudokuV10/Sudoku.sqlite"); // Change for OPC
+          
+            // First lets get the last attempt
+            //stmt = c.createStatement();
+            String sql = "SELECT uAttempt FROM Sudoku where UserName = ?";
+            pst2 = c.prepareStatement(sql);
+            pst2.setString(1, userName);
+            ResultSet rs = pst2.executeQuery();
+            //STEP 5: Extract data from result set
+            if(rs.next()){
+               //Retrieve by column name
+               commitCount  = rs.getInt("uAttempt");
+            } else {
+               // user does not exist.  Call the add user function
+            }
+            commitCount++;
+          
+            // Now lets update the user attempts
+            sql = "Update Sudoku SET uAttempt = ? where UserName = ?";
+            pst2 = c.prepareStatement(sql);
+            pst2.setInt(1, commitCount);
+            pst2.setString(2, userName);
+            pst2.executeUpdate();
+            System.out.println("Successfull Update");
+            rs.close();
+        } catch(Exception se){
+           se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
+        }  finally {
+           try{
+                    if(pst2!=null)
+                        pst2.close();
+                } catch(SQLException se2) {
+                    
+                } //do nothing.
+                try{
+                    if(c!=null)
+                        c.close();
+                } catch(SQLException se){
+               }
+              } 
+        
+        if (commitSelected == false){
+            // Do nothing
+        }
+        else
+            System.out.println("Submit button was pushed"); 
+        
         isOpen = false;
         super.dispose();
     }
