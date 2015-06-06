@@ -14,8 +14,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
@@ -32,7 +30,7 @@ import org.jsoup.nodes.Element;
 /**
  * GuideActivity represents the new window displaying Sudoku's rules
  * read in from an external source (URL)
- * @author Steve Sanchez
+ * @author Steve Sanchez, Isaiah
  */
 public class GuideActivity extends JFrame{
     public boolean isOpen = true;
@@ -40,8 +38,6 @@ public class GuideActivity extends JFrame{
     private final JEditorPane editorPane;
     private final JScrollPane editorScrollPane;
     private final JButton closeButton;
-    
-    
    
     /**
      * Sets up the components for the guide window
@@ -73,17 +69,17 @@ public class GuideActivity extends JFrame{
         
         // Create editor pane
         editorPane = new JEditorPane();
-          try {
-            String crap = "";
+        // Retrieve sudoku guide information from an external source
+        try {
+            String text = "";
             Document doc = Jsoup.connect("http://www.conceptispuzzles.com/?uri=puzzle/sudoku/rules").get();
             org.jsoup.select.Elements paragraph = doc.select("p");
             for(Element p: paragraph){
-                crap += "<p>" + p.text() + "</p>";
-                //System.out.println(p.text());
+                text += "<p>" + p.text() + "</p>";
             }
             String html = "<html><body style='width: 190 px'>";
             editorPane.setContentType("text/html");
-            editorPane.setText(crap + html);
+            editorPane.setText(text + html);
         } catch (IOException ex) {
             Logger.getLogger(GuideActivity.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -93,10 +89,7 @@ public class GuideActivity extends JFrame{
         editorScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         editorScrollPane.setPreferredSize(new Dimension(470, 340));
         editorScrollPane.setMinimumSize(new Dimension(470, 340));  
-        
-       
         editorPane.setEditable(false);
-        //editorPane.setPage();
         editorScrollPane.setBorder(BorderFactory.createEmptyBorder());
         editorScrollPane.setBackground(new Color(79,14,8));
         c.gridx = 1;

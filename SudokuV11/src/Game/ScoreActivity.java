@@ -31,9 +31,10 @@ import javax.swing.JTextField;
 /**
  * ScoreActivity represents the new window displaying Sudoku's score
  * table
- * @author Steve Sanchez
+ * @author Steve Sanchez, Isaiah
  */
 public class ScoreActivity extends JFrame{
+    public String totalTime;
     public boolean isOpen = true;
     public int commitCount, hintCount = 0;
     private boolean commitSelected = false;
@@ -50,8 +51,11 @@ public class ScoreActivity extends JFrame{
      * Sets up the components for the score window
      * @param title The new title of the window
      * @param buttonPressed The indicator for if commit brought up the window
+     * @param commit The number of submits/tries the user entered before being correct
+     * @param hint The number of hints the user retrieved while completing puzzle
+     * @param time The amount of time it took to complete the sudoku puzzle
      */
-    public ScoreActivity(String title, boolean buttonPressed, int commit, int hint){
+    public ScoreActivity(String title, boolean buttonPressed, int commit, int hint, String time){
         super(title);
         // Set layout for frame 
         setLayout(new FlowLayout(0,0,0));     
@@ -60,6 +64,7 @@ public class ScoreActivity extends JFrame{
         commitSelected = buttonPressed;
         commitCount = commit;
         hintCount = hint;
+        totalTime = time;
         
         // Set background image for score window
         windowBackground = new JLabel();
@@ -115,8 +120,7 @@ public class ScoreActivity extends JFrame{
                 System.out.println("Connecting to database...");
                 //Pc users change the connection and use \\.
                 c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ncc\\Documents\\NetBeansProjects\\SudokuV10\\Sudoku.sqlite");*/
-        
-        
+
         
         c.fill = GridBagConstraints.VERTICAL;
         c.gridx = 1;
@@ -232,7 +236,7 @@ public class ScoreActivity extends JFrame{
     }
     
     /**
-     * 
+     * Submit username, commitCount, hintCount, and time to a database of scores
      */
     public void submitButtonActionPerformed(){
              try {

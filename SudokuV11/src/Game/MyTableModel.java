@@ -10,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * MyTableModel represents a new model for the Sudoku Table to follow,
  * mainly existing to restrict what cells can be editable
- * @author Steve Sanchez
+ * @author Steve Sanchez, Michael Preciado
  */
 public class MyTableModel extends AbstractTableModel{
     public final String forbidden[][] = new String[9][9];

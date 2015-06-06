@@ -2,8 +2,17 @@
 
 package Game;
 
-
+/**
+ * SudokuCode represents the code that generates the numbers for a
+ * Sudoku puzzle
+ * @author Michael Preciado
+ */
 public class SudokuCode{
+    /**
+     * Generates a 9x9 sudoku puzzle of random numbers from 1-9
+     * @param sudoku An empty sudoku puzzle to be filled/generated
+     * @return A complete sudoku puzzle
+     */
     public int[][] sudoku(int[][] sudoku){
         int w=0; // controls while loop for sudoku
         sudoku=new int[9][9];    //Making a two dimensional array to store Sudoku

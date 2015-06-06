@@ -19,12 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -34,20 +29,17 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
 /**
  * MainFrame represents the main window for the Sudoku application
- * @author Steve Sanchez
+ * @author Steve Sanchez, Michael Preciado
  */
 public class MainFrame extends JFrame {
-    private static Timer t;
+    private String time;
     private long startTime;
     private long endTime;
-    
     private int hintAvailable = 1;
     public int hintCount, commitCount = 0;
     private final JLabel mainBackground, gameBackground, gridBackground, 
@@ -86,6 +78,7 @@ public class MainFrame extends JFrame {
      */
     public MainFrame(String title){
         super(title);
+        time = "";
         
         // Set layout for frame 
         setLayout(new FlowLayout(0,0,0));
@@ -154,14 +147,14 @@ public class MainFrame extends JFrame {
         gameBackground.add(gridPanel, constraints);
         
         // Add buttons to panel for main window
-        for (int i =0; i < mainButton.length; i++){
-            mainButtonPanel.add(mainButton[i]);
+        for (JButton mainButton1 : mainButton) {
+            mainButtonPanel.add(mainButton1);
         }
         
         // Add buttons to panel for game window and set its place on gridlayout
         gameButtonPanel.add(options);
-        for (int i =0; i < otherButton.length; i++){
-            gameButtonPanel.add(otherButton[i]);
+        for (JButton otherButton1 : otherButton) {
+            gameButtonPanel.add(otherButton1);
         }
         
         gameButtonPanel.add(Box.createRigidArea(new Dimension(0,204)));
@@ -430,20 +423,9 @@ public class MainFrame extends JFrame {
      * @param event The user pressed the start button
      */
     private void startButtonActionPerformed(ActionEvent event){
-        startTime = System.currentTimeMillis();     //Sets the timer when user hits start game   
-        
-        /*t.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                 throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        }, 0, 1000);*/
-        
+        startTime = System.currentTimeMillis();     //Sets the timer when user hits start game         
         cardLayout.next(stackedWindows);
     }  
-    
-
-
     
     /**
      * Displays a new window for Hi-Scores if one is not
@@ -453,7 +435,7 @@ public class MainFrame extends JFrame {
     private void scoreButtonActionPerformed(ActionEvent event){                                         
         if(scoreFrameOpen == false || scoreFrame.getStatus() == false){
             scoreFrameOpen = true;
-            scoreFrame = new ScoreActivity("Hi-Scores", commitSelected, commitCount, hintCount);
+            scoreFrame = new ScoreActivity("Hi-Scores", commitSelected, commitCount, hintCount, time);
             scoreFrame.setSize(600, 525);
             scoreFrame.setResizable(false);
             scoreFrame.setVisible(true);
@@ -526,13 +508,6 @@ public class MainFrame extends JFrame {
      * @param event The user pressed the new game button
      */
     private void newGameButtonActionPerformed(ActionEvent event){ 
-    /*^        t.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        }, 0, 1000);*/
-        
         // Generate new Sudoku puzzle and re-enable buttons
         generateGameBoard();
         enableButtons();
@@ -610,10 +585,9 @@ public class MainFrame extends JFrame {
         // Decrement available hints once to get correct value of leftover hints
         hintAvailable--;
         
-        // If there are no more hints, disable the button
+        // If there are no more hints, do nothing
         if(hintAvailable == 0){
-            //otherButton[2].setEnabled(false);
-            System.out.println("No more hints");
+            // Do nothing
         }
         
         // If user erases a hint, rechecks if hint is available and calls function
@@ -624,14 +598,12 @@ public class MainFrame extends JFrame {
             model.fireTableDataChanged();
             for(int i = 0; i < 9; i++){
                 for(int j = 0; j < 9; j++){
-                    System.out.println(model.rowData[i][j]);
                      if (model.rowData[i][j].equals(blank)){
                         hintAvailable++;
                     }
                 }
             }
             if (hintAvailable > 0){
-                System.out.println("If Statement");
                 hintButtonActionPerformed(event);
             }
         }
@@ -675,7 +647,6 @@ public class MainFrame extends JFrame {
                 // If the model rowData is a correct value, increment match  
                 if (table.getValueAt(i, j).toString().equals(answer)){
                     match++;
-                    System.out.println(" ->"+model.rowData[i][j] + "   " + (Object)sudokuCompletePuzzle[i][j]);
                 }else{ // If the number is not a correct value, reset it/ make it blank
                     System.out.println("IN HERE");
                     model.rowData[i][j] = rowData[i][j];
@@ -683,30 +654,19 @@ public class MainFrame extends JFrame {
                 }
             } 
         }
-        System.out.println(match);
+
         // If all values entered are correct, bring up the score window and disable
         // buttons
         if (match == 81){
             commitSelected = true;
             endTime = System.currentTimeMillis();
-            long totalTime = 0;
+            long totalTime, seconds = 0;
             int min = 0;
-            long seconds = 0;
-            String time = "";
-            totalTime = endTime - startTime;
+            totalTime = endTime - startTime; // Calculate total time in milliseconds
             
-            
-           /* if (totalTime > 60000){
-                totalTime = totalTime / 60000;
-                System.out.println(totalTime);
-                 min = (int) totalTime;
-                 System.out.println(totalTime);
-                totalTime -= min;
-            }*/
-            totalTime = totalTime/1000;
-            seconds = totalTime;
-            min = (int) (totalTime/60);    
-            seconds=seconds-(min*60);  
+            seconds = totalTime/1000; // Convert to seconds
+            min = (int) (seconds/60); // Convert to minutes
+            seconds -= (min*60);  
             if(seconds < 10){
                 time = "" + min + ":0" + seconds;
             }else{
