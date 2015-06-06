@@ -18,8 +18,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -37,6 +35,8 @@ import javax.swing.JTable;
  * @author Steve Sanchez, Michael Preciado
  */
 public class MainFrame extends JFrame {
+    private int showCount = 48;
+    private int difficulty = 48;
     private String time;
     private long startTime;
     private long endTime;
@@ -47,8 +47,6 @@ public class MainFrame extends JFrame {
     private MyTableModel model;
     private JTable table;
     private JMenuBar menuBar;
-    private JMenu gameMenu, aboutMenu;
-    private JMenuItem backItem, exitItem, aboutItem;
     private ScoreActivity scoreFrame;
     private GuideActivity guideFrame;
     private AboutActivity aboutFrame;
@@ -69,8 +67,10 @@ public class MainFrame extends JFrame {
         "Commit", "OtherExit"};
     String otherButtonTips[] = {"Generate New Puzzle", "Restart Puzzle", 
         "Get Hint For A #", "Display Solution", "Submit Answer", "Exit Game"};
-    Connection c = null;
-    PreparedStatement pst2 = null;
+    private final JMenu menus[] = new JMenu[3];
+    private final JMenuItem items[] = new JMenuItem[6];
+    String menuNames[] = {"Game", "About", "Difficulty"};
+    String itemNames[] = { "Back to Main Menu", "Exit", "About Sudoku", "Easy", "Medium", "Hard"};
     
     /**
      * Sets up the main window's components, visuals, and functionality
@@ -185,54 +185,91 @@ public class MainFrame extends JFrame {
         menuBar.setBorderPainted(false);
         
         // Creates categories in menu
-        gameMenu = new JMenu("Game");
-        gameMenu.setForeground(new Color(119,72,68));
-        gameMenu.setBorderPainted(false);
-        aboutMenu = new JMenu("About");
-        aboutMenu.setForeground(new Color(119,72,68));
-        aboutMenu.setBorderPainted(false);
+        createMenus();
         
         // Creates items for the menu categories
-        backItem = new JMenuItem("Back to Title");
-        backItem.setBorderPainted(false);
-        backItem.setForeground(new Color(119,72,68));
-        backItem.setBackground(new Color(40,7,2));
-        backItem.addActionListener(new ActionListener(){
+        createItems();
+        
+        // Sets up the menu bar
+        menus[0].add(items[0]);
+        menus[0].add(items[1]);
+        menus[1].add(items[2]);
+        menus[2].add(items[3]);
+        menus[2].add(items[4]);
+        menus[2].add(items[5]);
+        menuBar.add(menus[0]);
+        menuBar.add(menus[1]);
+        menuBar.add(menus[2]);
+        setJMenuBar(menuBar);
+    }
+    
+    /**
+     * 
+     */
+    private void createMenus(){
+        for(int i = 0; i < menus.length; i++){
+            menus[i] = new JMenu(menuNames[i]);
+            menus[i].setForeground(new Color(119,72,68));
+            menus[i].setBorderPainted(false);
+        }
+    }
+    
+    private void createItems(){
+        for(int i = 0; i < items.length; i++){
+            items[i] = new JMenuItem(itemNames[i]);
+            items[i].setBorderPainted(false);
+            items[i].setForeground(new Color(119,72,68));
+            items[i].setBackground(new Color(40,7,2));
+        }
+        // Add listeners to the items
+        items[0].addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent event){
                 backItemActionPerformed(event);
             }
         });
-        exitItem = new JMenuItem("Exit");
-        exitItem.setBorderPainted(false);
-        exitItem.setForeground(new Color(119,72,68));
-        exitItem.setBackground(new Color(40,7,2));
-        exitItem.addActionListener(new ActionListener(){
+
+        items[1].addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent event){
                 exitButtonActionPerformed(event);
             }
         });
-        aboutItem = new JMenuItem("About Sudoku");
-        aboutItem.setBorderPainted(false);
-        aboutItem.setForeground(new Color(119,72,68));
-        aboutItem.setBackground(new Color(40,7,2));
-        aboutItem.addActionListener(new ActionListener(){
+       
+        items[2].addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent event){
                 aboutItemActionPerformed(event);
             }
         });
-
-        // Sets up the menu bar
-        gameMenu.add(backItem);
-        gameMenu.add(exitItem);
-        aboutMenu.add(aboutItem);
-        menuBar.add(gameMenu);
-        menuBar.add(aboutMenu);
-        setJMenuBar(menuBar);
+        
+        items[3].addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent event){
+                difficulty = 48;
+                showCount = difficulty;
+                newGameButtonActionPerformed(event);
+            }
+        });
+       
+        items[4].addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent event){
+                difficulty = 40;
+                showCount = difficulty;
+                newGameButtonActionPerformed(event);
+            }
+        });
+        
+        items[5].addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent event){
+                difficulty = 30;
+                showCount = difficulty;
+                newGameButtonActionPerformed(event);
+            }
+        });
     }
-    
     /**
      * Creates the table used as the game board
      */
@@ -244,7 +281,6 @@ public class MainFrame extends JFrame {
         table = new JTable();
         model = new MyTableModel(rowData, colData, sudokuForbidden);
         table.setModel(model);
-        //table.setDefaultEditor(Integer.class, new IntegerEditor(1, 9));
         table.addKeyListener(null);
         table.setRowSelectionAllowed(false);
         table.setPreferredSize(new Dimension(550, 550));
@@ -264,22 +300,46 @@ public class MainFrame extends JFrame {
         SudokuCode puzzleGenerator = new SudokuCode();
         sudokuCompletePuzzle = puzzleGenerator.sudoku(sudokuCompletePuzzle);
         int sudokuUserPuzzle [][] = new int [9][9];
-        int rNumber ;
+        int randRow, randCol;
+        int i = 0;
+        int j = 0;
         String dataNum = "";
         
         //test making random board template
-        for(int row = 0; row < 9; row++){
-            for(int column = 0; column <9; column++){
-                   rNumber = (int)(2*Math.random());
-                   sudokuUserPuzzle[row][column] = rNumber;
-                   // Initialize forbidden cell 
-                   sudokuForbidden[row][column] = "EditableValueHere";
+        while (showCount > 0){
+            randRow = (int)(9*Math.random());
+            randCol = (int)(9*Math.random());
+            
+            // If the cell value is 0, change it to 1 and its now visible
+            if (sudokuUserPuzzle[randRow][randCol] == 0){
+                sudokuUserPuzzle[randRow][randCol] = 1;
+                showCount--;
+            }
+            // To assure each row has at least 1 visible number
+            if (i < 9){
+                randCol = (int)(9*Math.random());
+                if (sudokuUserPuzzle[i][randCol] == 0){
+                    sudokuUserPuzzle[i][randCol] = 1;
+                    showCount--;
+                }
+                i++;
+            }
+            // To assure each column has at least 1 visible number
+            if (j < 9){
+                randRow = (int)(9*Math.random());
+                if (sudokuUserPuzzle[randRow][j] == 0){
+                    sudokuUserPuzzle[randRow][j] = 1;
+                    showCount--;
+                }
+                j++;
             }
         }
 
         //test combining template and completed sudoku board to make users view of game
         for(int row = 0; row < 9; row++){
             for(int column = 0; column <9; column++){
+                // Initialize forbidden cell 
+                sudokuForbidden[row][column] = "EditableValueHere";
                 if(sudokuUserPuzzle[row][column]!= 0){
                     sudokuUserPuzzle[row][column] = sudokuCompletePuzzle[row][column];
                     dataNum = "" + sudokuUserPuzzle[row][column];
@@ -435,7 +495,7 @@ public class MainFrame extends JFrame {
     private void scoreButtonActionPerformed(ActionEvent event){                                         
         if(scoreFrameOpen == false || scoreFrame.getStatus() == false){
             scoreFrameOpen = true;
-            scoreFrame = new ScoreActivity("Hi-Scores", commitSelected, commitCount, hintCount, time);
+            scoreFrame = new ScoreActivity("Hi-Scores", commitSelected, commitCount, hintCount, difficulty, time);
             scoreFrame.setSize(600, 525);
             scoreFrame.setResizable(false);
             scoreFrame.setVisible(true);
@@ -509,6 +569,7 @@ public class MainFrame extends JFrame {
      */
     private void newGameButtonActionPerformed(ActionEvent event){ 
         // Generate new Sudoku puzzle and re-enable buttons
+        showCount = difficulty;
         generateGameBoard();
         enableButtons();
 

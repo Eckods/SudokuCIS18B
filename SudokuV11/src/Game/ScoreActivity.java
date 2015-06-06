@@ -34,7 +34,7 @@ import javax.swing.JTextField;
  * @author Steve Sanchez, Isaiah
  */
 public class ScoreActivity extends JFrame{
-    public String totalTime;
+    public String difficulty, totalTime;
     public boolean isOpen = true;
     public int commitCount, hintCount = 0;
     private boolean commitSelected = false;
@@ -53,18 +53,29 @@ public class ScoreActivity extends JFrame{
      * @param buttonPressed The indicator for if commit brought up the window
      * @param commit The number of submits/tries the user entered before being correct
      * @param hint The number of hints the user retrieved while completing puzzle
+     * @param level The level of difficulty the user completed the puzzle on
      * @param time The amount of time it took to complete the sudoku puzzle
      */
-    public ScoreActivity(String title, boolean buttonPressed, int commit, int hint, String time){
+    public ScoreActivity(String title, boolean buttonPressed, int commit, int hint, int level, String time){
         super(title);
         // Set layout for frame 
         setLayout(new FlowLayout(0,0,0));     
         
         // Sets the boolean to the indicator of it Commit Sudoku was pressed
+        // and initialize variables being passed to database
         commitSelected = buttonPressed;
         commitCount = commit;
         hintCount = hint;
         totalTime = time;
+        if (level == 48){
+            difficulty = "Easy";
+        }
+        else if (level == 40){
+            difficulty = "Medium";
+        }
+        else{
+            difficulty = "Hard";
+        }
         
         // Set background image for score window
         windowBackground = new JLabel();
@@ -239,41 +250,40 @@ public class ScoreActivity extends JFrame{
      * Submit username, commitCount, hintCount, and time to a database of scores
      */
     public void submitButtonActionPerformed(){
-             try {
-             //Register JDBC Driver. 
-                Class.forName("org.sqlite.JDBC");
-                
-                //Opening the connection. 
-                System.out.println("Connecting to database...");
-                //Pc users change the connection and use \\.
-                c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ncc\\Documents\\NetBeansProjects\\SudokuV10\\Sudoku.sqlite");
-                
-                //Inserting data into the database.
-                String sql = "Insert into Sudoku (UserName, uAttempt, uHint) values (?, ?, ?)";
-                pst = c.prepareStatement(sql);
-                pst.setString(1, textField.getText()); // placing the user input into UserName.
-                pst.setInt(2, commitCount); //
-                pst.setInt(3, hintCount);
+        try {
+        //Register JDBC Driver. 
+           Class.forName("org.sqlite.JDBC");
 
-                pst.execute();
-            
-            } catch (Exception se) {
-                se.printStackTrace();
-            } finally {
-                try{
-                    if(pst!=null)
-                        pst.close();
-                } catch(SQLException se2) {
-                    
-                } //do nothing.
-                try{
-                    if(c!=null)
-                        c.close();
-                } catch(SQLException se){
-               }
-            } System.out.println("Added User Successfully!");
-            
-           
+           //Opening the connection. 
+           System.out.println("Connecting to database...");
+           //Pc users change the connection and use \\.
+           c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ncc\\Documents\\NetBeansProjects\\SudokuV10\\Sudoku.sqlite");
+
+           //Inserting data into the database.
+           String sql = "Insert into Sudoku (UserName, uAttempt, uHint) values (?, ?, ?)";
+           pst = c.prepareStatement(sql);
+           pst.setString(1, textField.getText()); // placing the user input into UserName.
+           pst.setInt(2, commitCount); //
+           pst.setInt(3, hintCount);
+
+           pst.execute();
+
+        } catch (Exception se) {
+            se.printStackTrace();
+         } finally {
+            try{
+                if(pst!=null)
+                    pst.close();
+            }catch(SQLException se2) {
+                //do nothing.
+            }
+            try{
+                if(c!=null)
+                    c.close();
+            } catch(SQLException se){
+                //do nothing.
+           }
+        } System.out.println("Added User Successfully!");  
     }
     
     /**
@@ -281,8 +291,12 @@ public class ScoreActivity extends JFrame{
      * @param event The user pressed the close button
      */
     public void closeButtonActionPerformed(ActionEvent event){
-        //Updating the Users Hints and Commits.
-                try {
+        if (commitSelected == false){
+            // Do nothing
+        }
+        else{
+            //Updating the Users Hints and Commits.
+            try {
             //Assigning the userName to the user input.
             String userName = textField.getText();
             //int clicks = 0;
@@ -305,7 +319,6 @@ public class ScoreActivity extends JFrame{
             } else {
                // user does not exist.  Call the add user function
             }
-            
           
             // Now lets update the user attempts
             sql = "Update Sudoku SET uAttempt = ? where UserName = ?";
@@ -315,28 +328,23 @@ public class ScoreActivity extends JFrame{
             pst2.executeUpdate();
             System.out.println("Successfull Update");
             rs.close();
-        } catch(Exception se){
-           se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
-        }  finally {
-           try{
+            } catch(Exception se){
+                se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
+            } finally {
+                try{
                     if(pst2!=null)
                         pst2.close();
                 } catch(SQLException se2) {
-                    
-                } //do nothing.
+                    // do nothing
+                }
                 try{
                     if(c!=null)
                         c.close();
                 } catch(SQLException se){
-               }
-              } 
-        
-        if (commitSelected == false){
-            // Do nothing
-        }
-        else
-            System.out.println("Submit button was pushed"); 
-        
+                    // do nothing
+                }
+            } 
+        } 
         isOpen = false;
         super.dispose();
     }
