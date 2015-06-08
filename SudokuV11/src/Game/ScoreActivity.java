@@ -259,16 +259,16 @@ public class ScoreActivity extends JFrame{
            //Opening the connection. 
            System.out.println("Connecting to database...");
            //Pc users change the connection and use \\.
-           c = DriverManager.getConnection("jdbc:sqlite:C:Sudoku.sqlite");
+           c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite");
 
            //Inserting data into the database.
-           String sql = "Insert into Sudoku (UserName, uAttempt, uHint) values (?, ?, ?)";
+           String sql = "Insert into Sudoku (UserName, uAttempt, uHint, uDifficulty, uTime) values (?, ?, ?, ?, ?)";
            pst = c.prepareStatement(sql);
            pst.setString(1, textField.getText()); // placing the user input into UserName.
            pst.setInt(2, commitCount); //
            pst.setInt(3, hintCount);
-           //pst.setInt(4, );
-           //pst.setString(5, );
+           pst.setString(4, difficulty);
+           pst.setString(5, totalTime);
 
            pst.execute();
 
@@ -342,8 +342,6 @@ public class ScoreActivity extends JFrame{
             try {
             //Assigning the userName to the user input.
             String userName = textField.getText();
-            //int clicks = 0;
-            //int commitCount =0;
             
             Class.forName("org.sqlite.JDBC");
             System.out.println("Connecting to database...");

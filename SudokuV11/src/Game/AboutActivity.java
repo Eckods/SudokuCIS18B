@@ -58,7 +58,7 @@ public class AboutActivity extends JFrame{
         
         String label = "Sudoku is a collaborative project for Java Advanced "
                 + "Object Programming developed by Steve Sanchez, "
-                + "Michael Preciado, and Isaiah ------. "
+                + "Michael Preciado, and Isaiah Robinson. "
                 + "<p>The program features:</p>"
                 + "<p>- An intereactive interface</p>"
                 + "<p>- A randomly generated Sudoku game board</p>"
