@@ -230,7 +230,7 @@ public class ScoreActivity extends JFrame{
                 //Opening the connection. 
                 System.out.println("Connecting to database...");
                 //Pc users change the connection and use \\.
-                c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/SudokuCIS18B/SudokuV10/Sudoku.sqlite");
+                c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite");
                 
                 //Inserting data into the database.
                 String sql = "Insert into Sudoku (UserName, uAttempt, uHint) values (?, ?, ?)";
@@ -275,7 +275,7 @@ public class ScoreActivity extends JFrame{
             
             Class.forName("org.sqlite.JDBC");
             System.out.println("Connecting to database...");
-            c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/SudokuCIS18B/SudokuV10/Sudoku.sqlite"); // Change for OPC
+            c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite"); // Change for OPC
           
             // First lets get the last attempt
             //stmt = c.createStatement();

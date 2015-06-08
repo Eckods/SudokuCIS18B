@@ -23,6 +23,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -71,7 +72,9 @@ public class MainFrame extends JFrame {
     String otherButtonTips[] = {"Generate New Puzzle", "Restart Puzzle", 
         "Get Hint For A #", "Display Solution", "Submit Answer", "Exit Game"};
     Connection c = null;
-    PreparedStatement pst2 = null;
+    PreparedStatement pst3 = null;
+    Statement stmt = null;
+    ResultSet rst = null; 
     
     /**
      * Sets up the main window's components, visuals, and functionality
@@ -636,8 +639,8 @@ public class MainFrame extends JFrame {
      * @param event The user pressed the commit button
      */
     private void commitButtonActionPerformed(ActionEvent event){ 
-
-       // Increment amount of times user pressed Commit
+   
+        // Increment amount of times user pressed Commit
         commitCount++;
 
         // Keep count for number of entries correct
@@ -664,8 +667,45 @@ public class MainFrame extends JFrame {
             scoreButtonActionPerformed(event);
             disableButtons();
         }
-    } 
-    
+        
+        /*try{
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("Connecting to database...");
+            c = DriverManager.getConnection("jdbc:sqlite:/Users/iAmZay/SudokuCIS18B/SudokuV10/Sudoku.sqlite"); // Change for OPC
+          
+            // First lets get the last attempt
+            stmt = c.createStatement();
+            String sql = "SELECT * FROM Sudoku";
+            pst3 = c.prepareStatement(sql);
+            ResultSet rst = pst3.executeQuery();
+            while(rst.next()){
+                String userName = rst.getString("UserName");
+                int userCommit = rst.getInt("uAttempt");
+                int userHint = rst.getInt("uHint");
+                System.out.println(userName + userCommit + userHint);
+            }
+        rst.close();
+        stmt.close();
+        }catch(Exception se){
+           se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
+        }  finally {
+           try{
+                    if(pst3!=null)
+                        pst3.close();
+                } catch(SQLException se2) {
+                    
+                } //do nothing.
+                try{
+                    if(c!=null)
+                        c.close();
+                } catch(SQLException se){
+               }
+              } 
+        */
+         
+        } 
+    //} 
+
     /**
      * Returns user back to title/main screen
      * @param event The user pressed the back to title menu item
@@ -723,3 +763,4 @@ public class MainFrame extends JFrame {
         otherButton[4].setEnabled(false);
     }
 }
+

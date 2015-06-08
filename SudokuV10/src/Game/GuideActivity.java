@@ -41,7 +41,6 @@ public class GuideActivity extends JFrame{
     private final JScrollPane editorScrollPane;
     private final JButton closeButton;
     
-    
    
     /**
      * Sets up the components for the guide window
@@ -73,15 +72,6 @@ public class GuideActivity extends JFrame{
         
         // Create editor pane
         editorPane = new JEditorPane();
-          try {
-            Document doc = Jsoup.connect("http://www.conceptispuzzles.com/?uri=puzzle/sudoku/rules").get();
-            org.jsoup.select.Elements paragraph = doc.select("p");
-            for(Element p: paragraph){
-                System.out.println(p.text());
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(GuideActivity.class.getName()).log(Level.SEVERE, null, ex);
-        }
         editorScrollPane = new JScrollPane(editorPane);
         editorPane.setForeground(Color.white);
         editorPane.setBackground(new Color(79, 14, 8));
@@ -91,6 +81,16 @@ public class GuideActivity extends JFrame{
         
        
         editorPane.setEditable(false);
+          try {
+            Document doc = Jsoup.connect("http://www.conceptispuzzles.com/?uri=puzzle/sudoku/rules").get();
+            org.jsoup.select.Elements paragraph = doc.select("p");
+            for(Element p: paragraph){
+                System.out.println(p.text());
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(GuideActivity.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         //editorPane.setPage();
         editorScrollPane.setBorder(BorderFactory.createEmptyBorder());
         editorScrollPane.setBackground(new Color(79,14,8));

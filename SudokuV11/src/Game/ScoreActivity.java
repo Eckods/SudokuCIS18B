@@ -46,6 +46,8 @@ public class ScoreActivity extends JFrame{
     Connection c = null;
     PreparedStatement pst = null;
     PreparedStatement pst2 = null;
+    //PreparedStatement pst3 = null;
+    //ResultSet rst = null;
     
     /**
      * Sets up the components for the score window
@@ -257,7 +259,7 @@ public class ScoreActivity extends JFrame{
            //Opening the connection. 
            System.out.println("Connecting to database...");
            //Pc users change the connection and use \\.
-           c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ncc\\Documents\\NetBeansProjects\\SudokuV10\\Sudoku.sqlite");
+           c = DriverManager.getConnection("jdbc:sqlite:C:Sudoku.sqlite");
 
            //Inserting data into the database.
            String sql = "Insert into Sudoku (UserName, uAttempt, uHint) values (?, ?, ?)";
@@ -265,6 +267,8 @@ public class ScoreActivity extends JFrame{
            pst.setString(1, textField.getText()); // placing the user input into UserName.
            pst.setInt(2, commitCount); //
            pst.setInt(3, hintCount);
+           //pst.setInt(4, );
+           //pst.setString(5, );
 
            pst.execute();
 
@@ -286,6 +290,45 @@ public class ScoreActivity extends JFrame{
         } System.out.println("Added User Successfully!");  
     }
     
+       //Query for Retrieving Data. Add this where we will be printing the users information.
+      /*try{
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("Connecting to database...");
+            c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite"); // Change for OPC
+          
+            // First lets select all Data.
+            stmt = c.createStatement();
+            String sql = "SELECT * FROM Sudoku";
+            pst3 = c.prepareStatement(sql);
+            ResultSet rst = pst3.executeQuery();
+            while(rst.next()){
+                String userName = rst.getString("UserName");
+                int userCommit = rst.getInt("uAttempt");
+                int userHint = rst.getInt("uHint");
+                int userTime = rst.getInt("uTime");
+                String userDiff = rst.getString("uDifficulty");
+                System.out.println("Usernamme: " + userName + " Attempts: " 
+                                    + userCommit + " Hints: " + uHint + " Time: " + uTime +
+                                    " Difficulty: " + uDifficulty);
+            }
+        rst.close();
+        stmt.close();
+        }catch(Exception se){
+           se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
+        }  finally {
+           try{
+                    if(pst3!=null)
+                        pst3.close();
+                } catch(SQLException se2) {
+                    
+                } //do nothing.
+                try{
+                    if(c!=null)
+                        c.close();
+                } catch(SQLException se){
+               }
+              } */
+    
     /**
      * Sets the open status to false and closes the window
      * @param event The user pressed the close button
@@ -304,7 +347,7 @@ public class ScoreActivity extends JFrame{
             
             Class.forName("org.sqlite.JDBC");
             System.out.println("Connecting to database...");
-            c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ncc\\Documents\\NetBeansProjects\\SudokuV10\\Sudoku.sqlite"); // Change for OPC;
+            c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite"); // Change for OPC;
           
             // First lets get the last attempt
             //stmt = c.createStatement();
