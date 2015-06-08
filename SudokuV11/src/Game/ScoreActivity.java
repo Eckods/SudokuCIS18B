@@ -305,11 +305,11 @@ public class ScoreActivity extends JFrame{
                 String userName = rst.getString("UserName");
                 int userCommit = rst.getInt("uAttempt");
                 int userHint = rst.getInt("uHint");
-                int userTime = rst.getInt("uTime");
-                String userDiff = rst.getString("uDifficulty");
+                int userTime = rst.getString("uDifficulty");
+                String userDiff = rst.getString(""uTime");
                 System.out.println("Usernamme: " + userName + " Attempts: " 
-                                    + userCommit + " Hints: " + uHint + " Time: " + uTime +
-                                    " Difficulty: " + uDifficulty);
+                                    + userCommit + " Hints: " + uHint +  " Difficulty: " + uDifficulty +
+                                     " Time: " + uTime);
             }
         rst.close();
         stmt.close();
