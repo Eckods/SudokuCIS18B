@@ -22,6 +22,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -280,7 +282,20 @@ public class ScoreActivity extends JFrame{
 
             pst.execute();
         } catch (Exception se) {
-            se.printStackTrace();
+            try{
+                String userName = textField.getText();      
+                String sql = "Replace into Sudoku (UserName, uAttempt, uHint, uTime, uDifficulty) values (?, ?, ?, ?, ?)";
+                pst = c.prepareStatement(sql);
+                pst.setString(1, userName);
+                pst.setInt(2, commitCount);
+                pst.setInt(3, hintCount);
+                pst.setString(4, totalTime);
+                pst.setString(5, difficulty);  
+                pst.executeUpdate();
+                System.out.println("Successfully Replaced");
+            }catch(SQLException se2) {
+                System.out.println("error....");//do nothing.
+            }
         } finally {
             try{
                 if(pst!=null)
@@ -321,9 +336,6 @@ public class ScoreActivity extends JFrame{
                 int userHint = rst.getInt("uHint");
                 String userTime = rst.getString("uTime");
                 String userDiff = rst.getString("uDifficulty");
-                System.out.println("Usernamme: " + userName + " Attempts: " 
-                                    + userCommit + " Hints: " + userHint + " Time: " + userTime +
-                                    " Difficulty: " + userDiff);
                 model.addRow(new Object[]{userName, userCommit, userHint, userTime, userDiff});
             }
             model.fireTableDataChanged();
@@ -358,36 +370,36 @@ public class ScoreActivity extends JFrame{
         else{
             //Updating the Users Hints and Commits.
             try {
-            //Assigning the userName to the user input.
-            String userName = textField.getText();      
-            Class.forName("org.sqlite.JDBC");
-            System.out.println("Connecting to database...");
-            c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite"); // Change for OPC;
-          
-            // First lets get the last attempt
-            String sql = "SELECT uAttempt FROM Sudoku where UserName = ?";
-            pst = c.prepareStatement(sql);
-            pst.setString(1, userName);
-            ResultSet rs = pst.executeQuery();
-            //STEP 5: Extract data from result set
-            if(rs.next()){
-               //Retrieve by column name
-               commitCount  = rs.getInt("uAttempt");
-            } else {
-               // user does not exist.  Call the add user function
-            }
-          
-            // Now lets update the user attempts
-            sql = "UPDATE Sudoku SET uAttempt = ?,  uHint = ?, uTime = ?, uDifficulty = ? WHERE UserName = ?";
-            pst = c.prepareStatement(sql);
-            pst.setInt(2, commitCount);
-            pst.setInt(3, hintCount);
-            pst.setString(4, totalTime);
-            pst.setString(5, difficulty);  
-            pst.setString(1, userName);
-            pst.executeUpdate();
-            System.out.println("Successfully Updated");
-            rs.close();
+                //Assigning the userName to the user input.
+                String userName = textField.getText();      
+                Class.forName("org.sqlite.JDBC");
+                System.out.println("Connecting to database...");
+                c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite"); // Change for OPC;
+
+                // First lets get the last attempt
+                String sql = "SELECT uAttempt FROM Sudoku where UserName = ?";
+                pst = c.prepareStatement(sql);
+                pst.setString(1, userName);
+                ResultSet rs = pst.executeQuery();
+                //STEP 5: Extract data from result set
+                if(rs.next()){
+                   //Retrieve by column name
+                   commitCount  = rs.getInt("uAttempt");
+                } else {
+                   // user does not exist.  Call the add user function
+                }
+
+                // Now lets update the user attempts
+                sql = "UPDATE Sudoku SET uAttempt = ?,  uHint = ?, uTime = ?, uDifficulty = ? WHERE UserName = ?";
+                pst = c.prepareStatement(sql);
+                pst.setInt(2, commitCount);
+                pst.setInt(3, hintCount);
+                pst.setString(4, totalTime);
+                pst.setString(5, difficulty);  
+                pst.setString(1, userName);
+                pst.executeUpdate();
+                System.out.println("Successfully Updated");
+                rs.close();
             } catch(Exception se){
                 se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
             } finally {

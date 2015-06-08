@@ -574,7 +574,7 @@ public class MainFrame extends JFrame {
         showCount = difficulty;
         generateGameBoard();
         enableButtons();
-
+        hintCount = 0;
         // Assigns new rowData to the model's rowData as well as updates
         // the forbidden values
         resetTableValues();
@@ -590,7 +590,7 @@ public class MainFrame extends JFrame {
     private void restartButtonActionPerformed(ActionEvent event){
         // Re-enable buttons if disabled
         enableButtons();
-        
+        hintCount = 0;
         // Resetting the table with blanks where they should be
         resetTableValues();
         model.fireTableDataChanged();
@@ -631,7 +631,7 @@ public class MainFrame extends JFrame {
                 }
             }
         }
-        System.out.println(hintAvailable-1);
+        //System.out.println(hintAvailable-1);
         
         // As long as there are hints, pick a random row and column to fill in
         while(hintAvailable > 0){
@@ -711,7 +711,7 @@ public class MainFrame extends JFrame {
                 if (table.getValueAt(i, j).toString().equals(answer)){
                     match++;
                 }else{ // If the number is not a correct value, reset it/ make it blank
-                    System.out.println("IN HERE");
+                    //System.out.println("IN HERE");
                     model.rowData[i][j] = rowData[i][j];
                     model.fireTableCellUpdated(i, j);
                 }
@@ -735,7 +735,7 @@ public class MainFrame extends JFrame {
             }else{
                 time = "" + min + ":" + seconds;
             }
-            System.out.println(time);
+            //System.out.println(time);
             scoreButtonActionPerformed(event);
             disableButtons();
         }
