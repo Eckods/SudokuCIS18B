@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * Sudoku Final Project
- * @author Steve Sanchez, Michael Preciado, Isaiah
+ * @author Steve Sanchez, Michael Preciado, Isaiah Robinson
  */
 public class App {
     /**

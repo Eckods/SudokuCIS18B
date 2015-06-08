@@ -30,7 +30,7 @@ import org.jsoup.nodes.Element;
 /**
  * GuideActivity represents the new window displaying Sudoku's rules
  * read in from an external source (URL)
- * @author Steve Sanchez, Isaiah
+ * @author Steve Sanchez, Isaiah Robinson
  */
 public class GuideActivity extends JFrame{
     public boolean isOpen = true;

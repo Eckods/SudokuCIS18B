@@ -8,6 +8,7 @@ package Game;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -20,34 +21,38 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * ScoreActivity represents the new window displaying Sudoku's score
  * table
- * @author Steve Sanchez, Isaiah
+ * @author Steve Sanchez, Isaiah Robinson
  */
 public class ScoreActivity extends JFrame{
-    public String difficulty, totalTime;
-    public boolean isOpen = true;
-    public int commitCount, hintCount = 0;
-    private boolean commitSelected = false;
+    private DefaultTableModel model;
+    private final Object colData[] = {"Alias","Attempts","Hints Given","Time","Difficulty"};
+    private final String difficulty, totalTime;
+    private boolean isOpen = true;
+    private int commitCount, hintCount;
+    private final boolean commitSelected;
     private final JLabel windowBackground, scoreLabel, aliasLabel, submitButton;
     private JButton closeButton;
     private final JPanel aliasPanel, buttonPanel;
+    private final JScrollPane scrollPane;
     private final JTable scoreTable;
-    public static JTextField textField;
-    Connection c = null;
-    PreparedStatement pst = null;
-    PreparedStatement pst2 = null;
-    //PreparedStatement pst3 = null;
-    //ResultSet rst = null;
+    private static JTextField textField;
+    private Connection c;
+    private Statement stmt;
+    private PreparedStatement pst;
     
     /**
      * Sets up the components for the score window
@@ -65,6 +70,9 @@ public class ScoreActivity extends JFrame{
         
         // Sets the boolean to the indicator of it Commit Sudoku was pressed
         // and initialize variables being passed to database
+        c = null;
+        stmt = null;
+        pst = null;
         commitSelected = buttonPressed;
         commitCount = commit;
         hintCount = hint;
@@ -122,26 +130,26 @@ public class ScoreActivity extends JFrame{
         
         // Create table for scores
         scoreTable = new JTable();
-        scoreTable.setPreferredSize(new Dimension(470, 310));
+        //scoreTable.setPreferredSize(new Dimension(470, 310));
         scoreTable.setMinimumSize(new Dimension(470, 310));
-        
-        /*try {
-             //Register JDBC Driver. 
-                Class.forName("org.sqlite.JDBC");
-                
-                //Opening the connection. 
-                System.out.println("Connecting to database...");
-                //Pc users change the connection and use \\.
-                c = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ncc\\Documents\\NetBeansProjects\\SudokuV10\\Sudoku.sqlite");*/
-
-        
+        fillTable();
+        scoreTable.setFont(new Font("Serif", Font.PLAIN, 16));
+        scoreTable.setForeground(Color.black);
+        scoreTable.setRowHeight(24); 
+        scoreTable.setVisible(true);
+        scoreTable.convertRowIndexToView(0);
+        scoreTable.setModel(model);
+        scoreTable.getColumnModel().getColumn(0).setPreferredWidth(207);
+        scoreTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        scrollPane = new JScrollPane(scoreTable);
+        scrollPane.setMinimumSize(new Dimension(470, 310));
         c.fill = GridBagConstraints.VERTICAL;
         c.gridx = 1;
         c.gridy = 2;
         c.gridwidth = 3;
         c.gridheight= 2;
         c.insets = new Insets(10,144,0,0);
-        windowBackground.add(scoreTable, c);
+        windowBackground.add(scrollPane, c);
         
         // Create buttons
         submitButton = new JLabel();
@@ -254,27 +262,26 @@ public class ScoreActivity extends JFrame{
     public void submitButtonActionPerformed(){
         try {
         //Register JDBC Driver. 
-           Class.forName("org.sqlite.JDBC");
+            Class.forName("org.sqlite.JDBC");
 
-           //Opening the connection. 
-           System.out.println("Connecting to database...");
-           //Pc users change the connection and use \\.
-           c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite");
+            //Opening the connection. 
+            System.out.println("Connecting to database...");
+            //Pc users change the connection and use \\.
+            c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite");
 
-           //Inserting data into the database.
-           String sql = "Insert into Sudoku (UserName, uAttempt, uHint, uDifficulty, uTime) values (?, ?, ?, ?, ?)";
-           pst = c.prepareStatement(sql);
-           pst.setString(1, textField.getText()); // placing the user input into UserName.
-           pst.setInt(2, commitCount); //
-           pst.setInt(3, hintCount);
-           pst.setString(4, difficulty);
-           pst.setString(5, totalTime);
+            //Inserting data into the database.
+            String sql = "Insert into Sudoku (UserName, uAttempt, uHint, uTime, uDifficulty) values (?, ?, ?, ?, ?)";
+            pst = c.prepareStatement(sql);
+            pst.setString(1, textField.getText()); // placing the user input into UserName.
+            pst.setInt(2, commitCount); //
+            pst.setInt(3, hintCount);
+            pst.setString(4, totalTime);
+            pst.setString(5, difficulty);
 
-           pst.execute();
-
+            pst.execute();
         } catch (Exception se) {
             se.printStackTrace();
-         } finally {
+        } finally {
             try{
                 if(pst!=null)
                     pst.close();
@@ -286,48 +293,59 @@ public class ScoreActivity extends JFrame{
                     c.close();
             } catch(SQLException se){
                 //do nothing.
-           }
+            }
         } System.out.println("Added User Successfully!");  
+        submitButton.setEnabled(false);
     }
     
-       //Query for Retrieving Data. Add this where we will be printing the users information.
-      /*try{
+    private void fillTable(){
+        //Query for Retrieving Data. Add this where we will be printing the users information.
+        try{
+            model = new DefaultTableModel();
+            for (int j = 0; j < colData.length; j++){
+                model.addColumn(colData[j]);
+            }
+            int i = 0;
             Class.forName("org.sqlite.JDBC");
             System.out.println("Connecting to database...");
             c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite"); // Change for OPC
           
             // First lets select all Data.
             stmt = c.createStatement();
-            String sql = "SELECT * FROM Sudoku";
-            pst3 = c.prepareStatement(sql);
-            ResultSet rst = pst3.executeQuery();
+            String sql = "SELECT `_rowid_`,* FROM `Sudoku`  ORDER BY `uHint` ASC LIMIT 0, 15;";
+            pst = c.prepareStatement(sql);
+            ResultSet rst = pst.executeQuery();
             while(rst.next()){
                 String userName = rst.getString("UserName");
                 int userCommit = rst.getInt("uAttempt");
                 int userHint = rst.getInt("uHint");
-                int userTime = rst.getString("uDifficulty");
-                String userDiff = rst.getString(""uTime");
+                String userTime = rst.getString("uTime");
+                String userDiff = rst.getString("uDifficulty");
                 System.out.println("Usernamme: " + userName + " Attempts: " 
-                                    + userCommit + " Hints: " + uHint +  " Difficulty: " + uDifficulty +
-                                     " Time: " + uTime);
+                                    + userCommit + " Hints: " + userHint + " Time: " + userTime +
+                                    " Difficulty: " + userDiff);
+                model.addRow(new Object[]{userName, userCommit, userHint, userTime, userDiff});
             }
-        rst.close();
-        stmt.close();
+            model.fireTableDataChanged();
+            rst.close();
+            stmt.close();
         }catch(Exception se){
-           se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
-        }  finally {
-           try{
-                    if(pst3!=null)
-                        pst3.close();
-                } catch(SQLException se2) {
-                    
-                } //do nothing.
-                try{
-                    if(c!=null)
-                        c.close();
-                } catch(SQLException se){
-               }
-              } */
+            se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
+        } finally {
+            try{
+                if(pst!=null)
+                    pst.close();
+            } catch(SQLException se2) {
+                //do nothing.
+            } 
+            try{
+                if(c!=null)
+                    c.close();
+            } catch(SQLException se){
+                //do nothing.
+            }
+        } 
+    }
     
     /**
      * Sets the open status to false and closes the window
@@ -341,18 +359,16 @@ public class ScoreActivity extends JFrame{
             //Updating the Users Hints and Commits.
             try {
             //Assigning the userName to the user input.
-            String userName = textField.getText();
-            
+            String userName = textField.getText();      
             Class.forName("org.sqlite.JDBC");
             System.out.println("Connecting to database...");
             c = DriverManager.getConnection("jdbc:sqlite:Sudoku.sqlite"); // Change for OPC;
           
             // First lets get the last attempt
-            //stmt = c.createStatement();
             String sql = "SELECT uAttempt FROM Sudoku where UserName = ?";
-            pst2 = c.prepareStatement(sql);
-            pst2.setString(1, userName);
-            ResultSet rs = pst2.executeQuery();
+            pst = c.prepareStatement(sql);
+            pst.setString(1, userName);
+            ResultSet rs = pst.executeQuery();
             //STEP 5: Extract data from result set
             if(rs.next()){
                //Retrieve by column name
@@ -362,19 +378,22 @@ public class ScoreActivity extends JFrame{
             }
           
             // Now lets update the user attempts
-            sql = "Update Sudoku SET uAttempt = ? where UserName = ?";
-            pst2 = c.prepareStatement(sql);
-            pst2.setInt(1, commitCount);
-            pst2.setString(2, userName);
-            pst2.executeUpdate();
-            System.out.println("Successfull Update");
+            sql = "UPDATE Sudoku SET uAttempt = ?,  uHint = ?, uTime = ?, uDifficulty = ? WHERE UserName = ?";
+            pst = c.prepareStatement(sql);
+            pst.setInt(2, commitCount);
+            pst.setInt(3, hintCount);
+            pst.setString(4, totalTime);
+            pst.setString(5, difficulty);  
+            pst.setString(1, userName);
+            pst.executeUpdate();
+            System.out.println("Successfully Updated");
             rs.close();
             } catch(Exception se){
                 se.printStackTrace(); // Dont forget to print out the exceptions to see what problems your code could have
             } finally {
                 try{
-                    if(pst2!=null)
-                        pst2.close();
+                    if(pst!=null)
+                        pst.close();
                 } catch(SQLException se2) {
                     // do nothing
                 }

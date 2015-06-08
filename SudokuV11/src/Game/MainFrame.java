@@ -70,7 +70,7 @@ public class MainFrame extends JFrame {
     private final JMenu menus[] = new JMenu[3];
     private final JMenuItem items[] = new JMenuItem[6];
     String menuNames[] = {"Game", "About", "Difficulty"};
-    String itemNames[] = { "Back to Main Menu", "Exit", "About Sudoku", "Easy", "Medium", "Hard"};
+    String itemNames[] = { "Back to Main Menu", "Exit", "About Project", "Easy", "Medium", "Hard"};
     
     /**
      * Sets up the main window's components, visuals, and functionality
@@ -204,7 +204,7 @@ public class MainFrame extends JFrame {
     }
     
     /**
-     * 
+     * Sets up the menus options/tabs on the menu bar
      */
     private void createMenus(){
         for(int i = 0; i < menus.length; i++){
@@ -214,6 +214,9 @@ public class MainFrame extends JFrame {
         }
     }
     
+    /**
+     * Sets up the items per each menu option on the menu bar
+     */
     private void createItems(){
         for(int i = 0; i < items.length; i++){
             items[i] = new JMenuItem(itemNames[i]);
@@ -281,7 +284,6 @@ public class MainFrame extends JFrame {
         table = new JTable();
         model = new MyTableModel(rowData, colData, sudokuForbidden);
         table.setModel(model);
-        table.addKeyListener(null);
         table.setRowSelectionAllowed(false);
         table.setPreferredSize(new Dimension(550, 550));
         table.setFont(new Font("Serif", Font.PLAIN, 18));
@@ -483,7 +485,7 @@ public class MainFrame extends JFrame {
      * @param event The user pressed the start button
      */
     private void startButtonActionPerformed(ActionEvent event){
-        startTime = System.currentTimeMillis();     //Sets the timer when user hits start game         
+        newGameButtonActionPerformed(event);
         cardLayout.next(stackedWindows);
     }  
     
@@ -748,9 +750,9 @@ public class MainFrame extends JFrame {
     }
     
     /**
-     * Displays a new window for About Sudoku if one is
+     * Displays a new window for About Project if one is
      * not already open
-     * @param event The user pressed the about sudoku menu item
+     * @param event The user pressed the about project menu item
      */
     private void aboutItemActionPerformed(ActionEvent event) {
         if(aboutFrameOpen == false || aboutFrame.getStatus() == false){
